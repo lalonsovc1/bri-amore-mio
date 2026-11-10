@@ -1,0 +1,96 @@
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #0f1923;
+            color: #ece8e1;
+            user-select: none;
+            overflow: hidden;
+        }
+
+        .font-teko {
+            font-family: 'Teko', sans-serif;
+        }
+
+        /* Custom Scrollbar for Agent Carousel */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Background Text Outline Effect */
+        .bg-watermark {
+            font-family: 'Teko', sans-serif;
+            font-weight: 700;
+            text-transform: uppercase;
+            line-height: 0.75;
+            letter-spacing: 0.05em;
+            color: rgba(255, 255, 255, 0.03);
+            -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.06);
+            transition: all 0.5s ease-out;
+        }
+
+        /* Agent Full Image Animations & Glow */
+        .agent-full-img {
+            filter: drop-shadow(0 15px 35px rgba(0, 0, 0, 0.85));
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), filter 0.4s ease;
+        }
+
+        /* Selected thumbnail active glow */
+        .agent-thumb-active {
+            border-color: #ff4655 !important;
+            box-shadow: 0 0 20px rgba(255, 70, 85, 0.7);
+            transform: translateY(-6px) scale(1.06);
+        }
+        
+        .agent-thumb-locked {
+            border-color: #d1a55c !important;
+            box-shadow: 0 0 25px rgba(209, 165, 92, 0.8);
+        }
+
+        /* Lock In Button Styling */
+        .btn-lockin {
+            position: relative;
+            background: linear-gradient(135deg, #ff4655 0%, #bd1e2c 100%);
+            box-shadow: 0 0 20px rgba(255, 70, 85, 0.4);
+            transition: all 0.2s ease;
+            clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
+        }
+
+        .btn-lockin:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px rgba(255, 70, 85, 0.8);
+            background: linear-gradient(135deg, #ff5c6b 0%, #d12332 100%);
+        }
+
+        .btn-lockin:active:not(:disabled) {
+            transform: translateY(1px);
+        }
+
+        .btn-lockin:disabled {
+            background: linear-gradient(135deg, #d1a55c 0%, #8a6c35 100%);
+            box-shadow: 0 0 25px rgba(209, 165, 92, 0.5);
+            cursor: default;
+        }
+
+        /* Valorant angled corners */
+        .valorant-card {
+            clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px));
+        }
+
+        /* Scanline Overlay */
+        .scanlines {
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+            background-size: 100% 4px;
+        }
+
+        /* Locked In Screen Flash */
+        @keyframes lockinPulse {
+            0% { opacity: 0.8; transform: scale(0.95); }
+            50% { opacity: 1; transform: scale(1.05); }
+            100% { opacity: 0; transform: scale(1.1); }
+        }
+        .animate-lockin-flash {
+            animation: lockinPulse 0.8s ease-out forwards;
+        }

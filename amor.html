@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>No llores, eres perfecta.</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,600;0,700;1,300&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style/amor.css">
+
+</head>
+<body class="bg-gradient-to-br from-slate-950 via-rose-950 to-slate-950 text-white font-sans-custom min-h-screen flex flex-col items-center justify-center relative overflow-x-hidden p-4 select-none">
+
+    <!-- Canvas de corazones flotantes (Se activa tras el tap tap) -->
+    <canvas id="heartCanvas"></canvas>
+
+    <!-- Resplandor romántico -->
+    <div class="fixed inset-0 bg-radial-gradient from-rose-500/10 via-transparent to-transparent pointer-events-none"></div>
+
+
+    <!-- 1. PANTALLA PREVIA INTERACTIVA (TIKTOK LIVE AMBOT + TAP TAP X10) -->
+    <div id="tapUnlockOverlay" class="relative z-20 max-w-xl w-full bg-black/80 border border-rose-500/40 backdrop-blur-xl rounded-3xl p-6 md:p-8 shadow-[0_0_90px_rgba(244,63,94,0.3)] text-center transition-all duration-500">
+        
+        <!-- Encabezado TikTok Live Ambot -->
+        <div class="flex items-center justify-between border-b border-rose-500/20 pb-4 mb-6">
+            <div class="flex items-center space-x-3">
+                <div class="relative">
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-rose-500 to-pink-500 p-0.5 animate-pulse">
+                        <img src="img/perfil-ambot.jpeg" alt="Ambot" class="w-full h-full object-cover rounded-full">
+                    </div>
+                    <span class="absolute -bottom-1 -right-1 bg-red-600 text-[9px] font-black px-1.5 py-0.5 rounded-full uppercase tracking-tighter animate-ping">
+                        LIVE
+                    </span>
+                    <span class="absolute -bottom-1 -right-1 bg-red-600 text-[9px] font-black px-1.5 py-0.5 rounded-full uppercase tracking-tighter">
+                        LIVE
+                    </span>
+                </div>
+                <div class="text-left">
+                    <div class="font-bold text-white text-base flex items-center space-x-1">
+                        <span>Ambot🍄 Crow 🐦‍⬛</span>
+                        <span class="text-cyan-400 text-xs">✓</span>
+                    </div>
+                    <div class="text-xs text-rose-300/80 font-mono">Transmisión Especial ❤️</div>
+                </div>
+            </div>
+
+            <!-- Contador simulado de Me Gusta -->
+            <div class="bg-white/10 px-3 py-1.5 rounded-full border border-white/10 flex items-center space-x-1.5 text-xs text-rose-300 font-mono">
+                <span>❤️</span>
+                <span id="likeCounterDisplay">10,482</span>
+            </div>
+        </div>
+
+        <!-- Instrucción principal TAP TAP -->
+        <div class="my-6">
+            <p class="text-xs font-mono tracking-[0.25em] text-rose-400 uppercase mb-2">MISIÓN INTERACTIVA</p>
+            <h2 class="text-xl md:text-2xl font-bold text-white mb-6">
+                Dale <span class="text-rose-400 font-extrabold">10 TAP TAPS</span> al corazón para iniciar la transmisión romántica
+            </h2>
+
+            <!-- Botón del Corazón interactivo -->
+            <button id="tapHeartBtn" class="relative group outline-none transform active:scale-95 transition duration-150">
+                <div class="w-32 h-32 md:w-36 md:h-36 rounded-full bg-rose-500/20 border-2 border-rose-500/50 flex flex-col items-center justify-center mx-auto shadow-[0_0_50px_rgba(244,63,94,0.5)] group-hover:scale-105 transition">
+                    <span class="text-6xl md:text-7xl animate-bounce">💖</span>
+                    <span id="tapCounterBadge" class="mt-1 bg-rose-600 text-white font-black text-xs px-3 py-0.5 rounded-full shadow">
+                        10 TAPS
+                    </span>
+                </div>
+            </button>
+        </div>
+
+        <!-- Chat flotante estilo TikTok en Vivo -->
+        <div class="bg-black/40 border border-white/10 rounded-2xl p-3 text-left space-y-2 text-xs max-h-30 overflow-hidden relative">
+            <div class="text-gray-400 italic text-[11px] mb-1">💬 Chat de la transmisión:</div>
+            <div class="text-rose-300"><span class="font-bold text-white">Severus Snape : </span> When Ryan talks about you, he turns as red as a tomato haha</div>
+            <div class="text-rose-300"><span class="font-bold text-white">Jesus Medina:</span> Donde está Honey?? ✨</div>
+            <div class="text-rose-300"><span class="font-bold text-white">Beret Soge :</span> Gracias por hacerme sentir tan amado 💖</div>
+        </div>
+    </div>
+
+
+    <!-- 2. TARJETA PRINCIPAL DEL MENSAJE (OCULTA HASTA COMPLETAR LOS 10 TAPS) -->
+    <main id="romanticCard" class="hidden relative z-10 max-w-2xl w-full bg-black/60 border border-rose-500/30 backdrop-blur-md rounded-3xl p-8 md:p-12 shadow-[0_0_80px_rgba(244,63,94,0.25)] text-center my-8">
+        
+        <!-- Icono de Corazón Latiente -->
+        <div class="mb-6 inline-block">
+            <div class="w-16 h-16 rounded-full bg-rose-500/20 border border-rose-500/40 flex items-center justify-center animate-bounce shadow-[0_0_30px_rgba(244,63,94,0.6)]">
+                <span class="text-3xl">💖</span>
+            </div>
+        </div>
+
+        <!-- Encabezado -->
+        <h1 class="font-cursive text-6xl md:text-7xl text-rose-300 mb-4 drop-shadow-[0_0_15px_rgba(244,63,94,0.5)]">
+            Mi Personita Especial
+        </h1>
+        
+        <p class="text-xs font-mono tracking-[0.3em] text-rose-400 uppercase mb-8 border-b border-rose-500/20 pb-4">
+            EL DESTINO NO SE BUSCA • EL AMOR SUCEDE SIN QUERER
+        </p>
+
+        <!-- Carta / Texto Emotivo y Profundo -->
+        <div class="space-y-6 text-gray-200 text-base md:text-lg leading-relaxed font-light text-justify md:text-center">
+            <p>
+                Uno no decide enamorarse. Uno no sale a buscar a la persona de su vida con un mapa o un manual; el amor de verdad simplemente sucede... sin querer, de la manera más inesperada. Quién iba a imaginar que un simple encuentro en Threads, buscando colaborar en un trabajo, terminaría cruzando nuestros caminos de esta forma tan hermosa.
+            </p>
+            <p>
+                Con el tiempo, te convertiste en mi refugio, en mi personita especial. En ese lugar seguro donde lo único que importaba era protegerte, cuidarte y hacer que cada día sonrieras, incluso cuando terceras personas intentaban nublar nuestra paz.
+            </p>
+            <p>
+                Y es que contigo todo cambió. Me enseñaste que la vida se disfruta distinto cuando estás al lado de la persona correcta. Desde nuestras salidas a caminar, las risas comprando juntos, perdernos en las fiestas o sumergirnos en los jacuzzis... Cada vez que te miraba y veía tu carita tan feliz, entendía que mi mayor paz era verte sonreír.
+            </p>
+            <p>
+                ¿Cómo olvidar nuestra propia y mágica <strong>Sala de Menesteres</strong> en aquel hotel? El lugar donde el tiempo se detuvo en nuestro primer beso y donde supe que ya no había vuelta atrás, que mi corazón ya te pertenecía.
+            </p>
+            <p class="text-rose-300 font-medium italic">
+                Hemos jugado en el mismo equipo y superado cada nivel, pero la verdadera misión de mi vida empieza ahora mismo...
+            </p>
+        </div>
+
+        <!-- REVELACIÓN / MENSAJE FINAL -->
+        <div class="mt-10 pt-8 border-t border-rose-500/20">
+            <div id="revelationBox" class="bg-rose-950/40 border border-rose-500/40 p-6 rounded-2xl shadow-inner">
+                <p class="text-xs font-mono tracking-widest text-rose-300 uppercase mb-2">INSTRUCCIÓN FINAL DE LA MISIÓN</p>
+                
+                <h2 class="font-cursive text-4xl md:text-5xl text-white mb-4">
+                    Por favor... date la vuelta.
+                </h2>
+                
+                <p class="text-sm text-gray-300 font-light">
+                    Estoy justo detrás de ti, con el corazón en la mano, listo para hacerte la pregunta más importante de mi vida. ❤️
+                </p>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Audio de Fondo (Se activa exactamente al terminar los 10 taps) -->
+    <audio id="bgMusic" loop preload="auto">
+        <source src="audio/amor-bg.mp3" type="audio/mpeg">
+    </audio>
+
+
+    <script src="script/amor.js"></script>
+</body>
+</html>

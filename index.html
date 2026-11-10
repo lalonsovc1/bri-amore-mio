@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuevo Agente?</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Teko:wght@500;700&family=Montserrat:ital,wght@0,300;0,400;0,600;0,800;0,900;1,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style/main.css">
+
+</head>
+<body class="h-screen w-screen flex flex-col justify-between relative bg-[#0f1923] selection:bg-[#ff4655] selection:text-white">
+
+    <!-- Scanline effect for UI aesthetic -->
+    <div class="absolute inset-0 scanlines pointer-events-none z-30 opacity-40"></div>
+
+    <!-- Flash effect on Lock In -->
+    <div id="lockinFlash" class="absolute inset-0 bg-[#ff4655] z-50 pointer-events-none opacity-0"></div>
+
+    <!-- Dynamic Background Gradient Overlay -->
+    <div id="bgGradient" class="absolute inset-0 transition-all duration-700 opacity-40 pointer-events-none"></div>
+
+    <!-- Background Watermark Text -->
+    <div class="absolute inset-0 flex items-center justify-start pl-8 lg:pl-16 pointer-events-none overflow-hidden z-0">
+        <div id="watermarkText" class="bg-watermark text-[24vw] select-none uppercase font-bold tracking-tighter">
+            VALORANT
+        </div>
+    </div>
+
+    <!-- TOP BAR -->
+    <header class="relative z-20 flex items-center justify-between px-8 py-4 border-b border-white/10 bg-black/40 backdrop-blur-md">
+        <div class="flex items-center space-x-3">
+            <svg class="w-8 h-8 text-[#ff4655]" viewBox="0 0 100 100" fill="currentColor">
+                <path d="M 99.25 18.35 L 56.45 94.63 L 40.16 94.63 L 82.97 18.35 Z M 0.75 18.35 L 43.55 18.35 L 23.45 54.08 Z"/>
+            </svg>
+            <span class="font-teko text-3xl tracking-wider text-white">SELECCIÓN DE AGENTE</span>
+        </div>
+
+        <div id="statusBadge" class="px-4 py-1.5 bg-white/5 border border-white/10 rounded font-mono text-xs text-gray-300 flex items-center space-x-2">
+            <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+            <span id="statusText" class="tracking-widest uppercase">FASE DE SELECCIÓN</span>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main class="relative z-10 flex-1 flex flex-col lg:flex-row items-center justify-between px-6 lg:px-16 py-4 overflow-hidden">
+        
+        <!-- CENTER: Agent Portrait & Lock Banner -->
+        <div class="flex-1 h-full flex flex-col items-center justify-center relative my-auto">
+            <img id="agentFullImg" src="" alt="Agent" class="agent-full-img max-h-[68vh] object-contain hidden z-10">
+            
+            <!-- Locked In Banner Overlay -->
+            <div id="lockedBanner" class="absolute z-20 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 hidden flex-col items-center pointer-events-none">
+                <div class="bg-[#d1a55c] text-black font-teko text-6xl font-bold px-12 py-2 tracking-widest shadow-2xl uppercase border-2 border-white animate-bounce">
+                    ¡AGENTE ELEGIDO!
+                </div>
+            </div>
+
+            <!-- Loading Spinner -->
+            <div id="loader" class="flex flex-col items-center justify-center space-y-4">
+                <div class="w-14 h-14 border-4 border-[#ff4655] border-t-transparent rounded-full animate-spin"></div>
+                <span class="text-xs uppercase tracking-widest text-gray-400 font-mono">Cargando Agentes de VALORANT...</span>
+            </div>
+        </div>
+
+        <!-- RIGHT: Agent Info Panel -->
+        <aside id="infoPanel" class="w-full lg:w-[440px] bg-[#111c24]/85 backdrop-blur-md border border-white/10 p-6 rounded-xl flex flex-col justify-between z-20 shadow-2xl transition-all duration-300 opacity-0 transform translate-x-6 valorant-card">
+            <div>
+                <!-- Role Header -->
+                <div class="flex items-center justify-between mb-2">
+                    <div class="flex items-center space-x-2">
+                        <img id="roleIcon" src="" alt="Role" class="w-5 h-5 filter brightness-200">
+                        <span id="roleName" class="text-xs font-bold uppercase tracking-widest text-[#ff4655]">ROL</span>
+                    </div>
+                    <span id="agentOrigin" class="text-[10px] font-mono text-gray-400 uppercase tracking-widest border border-white/10 px-2 py-0.5 rounded">
+                        VALORANT PROTOCOL
+                    </span>
+                </div>
+
+                <!-- Agent Name -->
+                <h1 id="agentName" class="font-teko text-6xl font-bold uppercase tracking-tight text-white leading-none mb-2">NOMBRE</h1>
+                
+                <!-- Agent Description -->
+                <p id="agentDesc" class="text-xs leading-relaxed text-gray-300 mb-5 line-clamp-3">
+                    Descripción del agente.
+                </p>
+
+                <!-- Abilities Selector -->
+                <div class="border-t border-white/10 pt-4 mb-4">
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="text-xs uppercase font-bold text-gray-400 tracking-wider">Habilidades</h3>
+                        <span class="text-[10px] font-mono text-gray-500">CLIC PARA VER DETALLES</span>
+                    </div>
+                    <div id="abilitiesTabs" class="grid grid-cols-4 gap-2">
+                        <!-- Ability Buttons inserted dynamically -->
+                    </div>
+                </div>
+
+                <!-- Active Ability Details -->
+                <div class="bg-black/40 border border-white/10 p-4 rounded-lg min-h-[115px] relative">
+                    <div class="flex items-center justify-between mb-1.5">
+                        <span id="abilityName" class="font-bold text-sm text-[#d1a55c]">Selecciona una habilidad</span>
+                        <span id="abilitySlot" class="text-[10px] bg-white/10 px-2 py-0.5 rounded font-mono text-gray-300">TECLA</span>
+                    </div>
+                    <p id="abilityDesc" class="text-xs text-gray-300 leading-normal">
+                        Haz clic en los íconos superiores para ver los detalles de cada habilidad.
+                    </p>
+                </div>
+            </div>
+
+           <!-- LOCK IN BUTTON CONTAINER -->
+<div class="mt-6 pt-4 border-t border-white/10 flex flex-col items-center">
+    <button id="btnLockIn" class="btn-lockin w-full py-4 text-white font-teko text-3xl font-bold tracking-wider uppercase flex items-center justify-center space-x-2">
+        <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24">
+            <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+        </svg>
+        <span id="lockInText">CONFIRMA</span>
+    </button>
+</div>
+        </aside>
+
+    </main>
+
+
+<!-- PANTALLA DE CARGA FIJA CON FONDO TÁCTICO (OCULTA POR DEFECTO) -->
+<div id="loadingScreen" class="fixed inset-0 z-50 bg-black hidden flex flex-col items-center justify-center select-none overflow-hidden">
+    
+    <!-- FONDO DE LA PANTALLA DE CARGA -->
+    <!-- Opción A: Con una imagen de fondo propia (ej. 'img/fondo-carga.jpg') -->
+    <div class="absolute inset-0 bg-cover bg-center opacity-40 pointer-events-none" style="background-image: url('img/fondo-carga.jpg');"></div>
+    
+    <!-- Opción B: Destello ambiental y degradado táctico oscuro para darle estilo Valorant -->
+    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-red-950/30 pointer-events-none"></div>
+
+    <!-- Contenido principal centrado -->
+    <div class="flex flex-col items-center space-y-6 relative z-10 w-full max-w-sm px-6 text-center">
+        
+        <!-- Contenedor del Retrato del Agente -->
+        <div class="w-36 h-36 bg-[#111c24] border-2 border-[#ff4655] rounded-2xl overflow-hidden shadow-[0_0_35px_rgba(255,70,85,0.6)] relative">
+            <img id="loadingAgentImg" src="" alt="Agente" class="w-full h-full object-cover object-top scale-110">
+        </div>
+
+        <div class="font-teko text-4xl font-black text-white tracking-[0.2em] uppercase">
+            CARGANDO: <span id="loadingAgentName" class="text-[#ff4655]">AGENTE</span>
+        </div>
+
+        <!-- Barra de Carga -->
+        <div class="w-full bg-black/80 border border-white/20 h-2.5 rounded-full overflow-hidden p-0.5 shadow-inner">
+            <div id="loadingBar" class="h-full bg-[#ff4655] w-0 transition-all duration-75 shadow-[0_0_15px_rgba(255,70,85,0.8)]"></div>
+        </div>
+
+        <div class="text-[10px] font-mono tracking-widest text-gray-400 uppercase">
+            ESTABLECIENDO CONEXIÓN CON EL MAPA TÁCTICO...
+        </div>
+    </div>
+</div>
+    <!-- BOTTOM CAROUSEL -->
+    <footer class="relative z-20 w-full bg-black/70 border-t border-white/10 py-3 px-4 flex flex-col items-center">
+        <!-- Roster Navigation & Counter -->
+        <div class="flex items-center justify-between w-full max-w-6xl mb-2 px-2 text-xs text-gray-400">
+            <button id="btnPrev" class="hover:text-white transition flex items-center gap-1 font-bold tracking-wider">
+                &#9664; ANTERIOR
+            </button>
+            <span id="agentCounter" class="font-mono text-white text-sm tracking-widest">0 / 0</span>
+            <button id="btnNext" class="hover:text-[#ff4655] transition flex items-center gap-1 font-bold tracking-wider">
+                SIGUIENTE &#9654;
+            </button>
+        </div>
+
+        <!-- Scrollable Thumbnails Strip -->
+        <div id="carousel" class="flex space-x-3 overflow-x-auto no-scrollbar max-w-6xl w-full py-1 px-2 items-center">
+            <!-- Agent Thumbnails dynamically generated -->
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT LOGIC -->
+     <script src="script/main.js"></script>
+</body>
+</html>
